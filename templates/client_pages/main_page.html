@@ -1,0 +1,31 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        {% if request.user.is_authenticated %}
+            <h2 class="title">{{ title_page }} {{ request.user.first_name }}</h2>
+        {% endif %}
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        {% if request.user.is_superuser %}
+            <div style="margin-bottom: 75px; text-align: center">
+                <a href="{% url 'main_page_admin' %}" class="btn btn-primary text_button">
+                    Доступ к электронному документообороту
+                </a>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div><h2 class="title">Доступные услуги</h2></div>
+            <!-- Block with my museum services-->
+            <div class="col-12">
+                {% for service in table %}
+                    {% include 'client_pages/../include/museum_service.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

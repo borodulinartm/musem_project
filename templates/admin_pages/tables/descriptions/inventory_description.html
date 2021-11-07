@@ -1,0 +1,20 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/inventory_table.html' %}
+        {% for content_list in table %}
+            <a class="btn btn-primary text_button"
+               href="{% url 'edit_inventory' inventory_id=content_list.inventory_id %}">Редактировать данные об объекте</a>
+            <a class="btn btn-danger text_button"
+               href="{% url 'delete_inventory' inventory_id=content_list.inventory_id %}">Удалить сведения об объекте</a>
+        {% endfor %}
+    </div>
+{% endblock content %}

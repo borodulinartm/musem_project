@@ -1,0 +1,23 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="all_buttons_block">
+        {% for content_list in table %}
+            <div style="font-size: 40px">Имя: {{ content_list.first_name }}</div>
+            <div style="font-size: 40px">Фамилия: {{ content_list.last_name }}</div>
+            <div style="font-size: 40px">Ник-нейм: {{ content_list.user_name }}</div>
+            <div style="font-size: 40px">Почта: {{ content_list.email }}</div>
+        {% endfor %}
+        <a class="float-right btn text-white btn-success text_button"
+           href="{% url 'user_settings' %}">Изменить данные</a>
+        <a class="float-right btn text-white btn-danger text_button"
+           href="{% url 'change_password' %}">Сбросить пароль</a>
+    </div>
+{% endblock %}

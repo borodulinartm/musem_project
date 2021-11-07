@@ -1,0 +1,48 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-light p-5 service">
+                    <h2 class="sub_title_text">Таблицы</h2>
+                    <a class="btn btn-primary text_button" href="{% url 'clients_list' %}">Журнал клиентов</a>
+                    <a class="btn btn-primary text_button" href="{% url 'employee_list' %}">Журнал сотрудников</a>
+                    <a class="btn btn-primary text_button" href="{% url 'rating_list' %}">Журнал отзывов</a>
+                    <a class="btn btn-primary text_button" href="{% url 'services_list' %}">Журнал услуг</a>
+                    <a class="btn btn-primary text_button" href="{% url 'revenue_list' %}">Журнал доходов</a>
+                    <a class="btn btn-primary text_button" href="{% url 'expanse_list' %}">Журнал расходов</a>
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'salary_employee_list' %}">Выплата заработной платы</a>
+                    <a class="btn btn-primary text_button" href="{% url 'session_list' %}">Журнал посещений</a>
+                    <a class="btn btn-primary text_button" href="{% url 'gik_list' %}">Журнал ГИК</a>
+                    <a class="btn btn-primary text_button" href="{% url 'safety_list' %}">Картотека сохранности</a>
+                    <a class="btn btn-primary text_button" href="{% url 'location_list' %}">Топографическая картотека</a>
+                    <a class="btn btn-primary text_button" href="{% url 'inventory_list' %}">Инвентарная картотека</a>
+                </div>
+                <div class="bg-light p-5 service">
+                    <h2 class="sub_title_text">Отчёты</h2>
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'report_revenue' %}">Доходы</a>
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'report_expense' %}">Расходы</a>
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'report_popular' %}">Популярные услуги</a>
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'report_workload' %}">Загруженность музея</a>
+                </div>
+                <div style="margin-bottom: 75px; text-align: center">
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'main_page' %}">Перейти в клиентское меню</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,28 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'location_description' location_id=content_list.location_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.location_id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.rack_number }}</td>
+                <td class="text_button">{{ content_list.shelf_number }}</td>
+                <td class="text_button">{{ content_list.count_at_place }}</td>
+                <td>
+                    <a href="{% url 'gik_description' gik_id=content_list.gik_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.gik_id }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

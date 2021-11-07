@@ -1,0 +1,15 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        <h2 class="sub_title_table">Таблица доходов</h2>
+        {% include 'include/tables/detail_report_revenue.html' %}
+    </div>
+{% endblock content %}

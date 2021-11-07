@@ -1,0 +1,48 @@
+{% load static %}
+<div class="bg-light p-5 row service">
+    <h3>{{ service.name }}</h3>
+    {% if is_description %}
+        <div class="text_to_list_services">Описание: {{ service.description }}</div>
+    {% else %}
+        <div class="text_to_list_services">Описание: {{ service.description|truncatechars:100 }}</div>
+    {% endif %}
+
+    <div class="text_to_list_services">Стоимость: {{ service.cost }}</div>
+    {% if service.rating == None %}
+        <div class="text_to_list_services">Оценки: --</div>
+    {% else %}
+        {% if service.rating >= 4 %}
+            <div class="text-success text_to_list_services">Оценки: {{ service.rating|floatformat:2 }}</div>
+        {% elif service.rating >= 2 %}
+            <div class="text-warning text_to_list_services">Оценки: {{ service.rating|floatformat:2 }}</div>
+        {% else %}
+            <div class="text-danger text_to_list_services">Оценки: {{ service.rating|floatformat:2 }}</div>
+        {% endif %}
+    {% endif %}
+
+    {% if is_description == 0 %}
+        <div>
+            <a class="btn btn-primary text_button"
+                href="{% url 'client_service_description' service_id=service.service_id type_sort='negative' %}">Подробности</a>
+        </div>
+    {% else %}
+        {# Если пользователь не авторизован, то у него нет доступа к таким функциям как покупка билета и оставление отзыва#}
+        {% if request.user.is_authenticated %}
+            {% if request.user.is_superuser == 0 %}
+                <div>
+                    <a class="btn btn-primary text_button"
+                       href="{% url 'client_buy_ticket' service_id=service.service_id %}">Купить билет</a>
+                    {% if is_rating_exists == 0 %}
+                        {# Даже если пользователь авторизован, то он не может оставлять отзыв более одного раза #}
+                        <a class="btn btn-primary text_button"
+                           href="{% url 'client_create_rating' service_id=service.service_id %}">Оставить отзыв </a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="fst-italic mt-30 text_button">Вам недоступны такие функции как покупка билета и оставление отзыва
+                , поскольку вы являетесь администратором
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</div>

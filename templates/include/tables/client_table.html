@@ -1,0 +1,29 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'user_description' user_id=content_list.id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.first_name }}</td>
+                <td class="text_button">{{ content_list.last_name }}</td>
+                <td class="text_button">{{ content_list.username }}</td>
+                <td class="text_button">{{ content_list.email }}</td>
+                {% if content_list.is_active %}
+                    <td class="text-success text_button">Зарегистрирован</td>
+                {% else %}
+                    <td class="text-danger text_button">Забанен</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

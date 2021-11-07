@@ -1,0 +1,26 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/gik_table.html' %}
+        {% for content_list in table %}
+            <div class="extra-functions">
+                <a class="btn btn-success text_button"
+                   href="{% url 'safe_description_for_gik' gik_id=content_list.gik_id %}">
+                    Показать сохранность для объекта
+                </a>
+            </div>
+            <a class="btn btn-primary text_button"
+               href="{% url 'edit_gik' gik_id=content_list.gik_id %}">Редактировать данные об объекте</a>
+            <a class="btn btn-danger text_button"
+               href="{% url 'delete_gik' gik_id=content_list.gik_id %}">Удалить сведения об объекте</a>
+        {% endfor %}
+    </div>
+{% endblock content %}

@@ -1,0 +1,38 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'gik_description' gik_id=content_list.gik_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.gik_id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.date }}</td>
+                <td class="text_button">{{ content_list.name }}</td>
+                <td class="text_button">{{ content_list.name_author }} {{ content_list.surname_author }}</td>
+                <td class="text_button">{{ content_list.count_objects }}</td>
+                <td class="text_button">{{ content_list.material }}</td>
+                <td class="text_button">{{ content_list.safety_on_coming }}</td>
+                {% if is_description %}
+                    <td class="text_button">{{ content_list.note }}</td>
+                {% else %}
+                    <td class="text_button">{{ content_list.note|truncatechars:20 }}</td>
+                {% endif %}
+                <td>
+                    <a href="{% url 'employee_description' employee_id=content_list.employee_id %}"
+                        class="btn btn-outline-primary">
+                        {{ content_list.name_employee }} {{ content_list.employee_surname }}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

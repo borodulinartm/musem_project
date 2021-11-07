@@ -1,0 +1,32 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/service_table.html' %}
+        <div class="extra-functions">
+            {% for content_list in table %}
+                {% if is_rating %}
+                    <a class="btn btn-success text_button"
+                       href="{% url 'rating_for_certain_service' service_id=content_list.service_id %}">
+                        Просмотреть все отзывы по данной услуге
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="default_functions">
+            {% for content_list in table %}
+                <a class="btn btn-primary text_button"
+                    href="{% url 'edit_service' service_id=content_list.service_id %}">Редактировать данные об услуге</a>
+                <a class="btn btn-danger text_button"
+                    href="{% url 'delete_service' service_id=content_list.service_id %}">Удалить услугу</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

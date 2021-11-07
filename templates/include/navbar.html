@@ -1,0 +1,42 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        {# Ссылка для перехода на главную страницу #}
+        {% if is_administrative_zone %}
+            <a class="navbar-brand" href="{% url "main_page_admin" %}">На главную</a>
+        {% else %}
+            <a class="navbar-brand" href="{% url "main_page" %}">На главную</a>
+        {% endif %}
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="pull-right">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_data' %}" tabindex="-1">{{ request.user.first_name }}</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if request.user.is_superuser == 0 %}
+                            <a class="nav-link"
+                               href="{% url 'client_list_visits' %}" tabindex="-1">Мои посещения</a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_settings' %}" tabindex="-1">Личные данные</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}" tabindex="-1">Выход</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}"
+                           tabindex="-1">Регистрация</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}" tabindex="-1">Авторизация</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

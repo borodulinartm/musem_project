@@ -1,0 +1,20 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/location_table.html' %}
+        {% for content_list in table %}
+            <a class="btn btn-primary text_button"
+               href="{% url 'edit_location' location_id=content_list.location_id %}">Редактировать данные о местоположении</a>
+            <a class="btn btn-danger text_button"
+               href="{% url 'delete_location' location_id=content_list.location_id %}">Удалить сведения</a>
+        {% endfor %}
+    </div>
+{% endblock content %}

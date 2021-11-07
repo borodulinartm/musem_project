@@ -1,0 +1,42 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        {% if request.user.is_authenticated %}
+            <h2 class="title">{{ title_page }}</h2>
+        {% endif %}
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!-- Block with my museum services-->
+            <div class="col-12">
+                <h2>То что вы забронировали но не посетили</h2>
+                {% for session in list_accesible_sessions %}
+                    <div class="bg-light p-5 row service">
+                        <h3>{{ session.name }}</h3>
+                        <div class="text_to_list_services">Чек ID: {{ session.revenue_id }}</div>
+                        <div class="text_to_list_services">Дата покупки: {{ session.date }}</div>
+                        <div class="text_to_list_services">К оплате: {{ session.revenue }}</div>
+                        <div>
+                            <a class="btn btn-danger text_button"
+                               href="{% url 'client_delete_access_session' revenue_id=session.revenue_id %}">Не смогу придти</a>
+                        </div>
+                    </div>
+                {% endfor %}
+                <h2>Все услуги, которые вы приобрели и посетили в музее</h2>
+                {% for visited_session in list_visited_sessions %}
+                    <div class="bg-light p-5 row service">
+                        <h3>{{ visited_session.name }}</h3>
+                        <div class="text_to_list_services">Чек ID: {{ visited_session.revenue_id }}</div>
+                        <div class="text_to_list_services">Дата покупки: {{ visited_session.date }}</div>
+                        <div class="text_to_list_services">К оплате: {{ visited_session.revenue }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

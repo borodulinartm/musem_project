@@ -1,0 +1,48 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'service_description' service_id=content_list.service_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.service_id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.name }}</td>
+                {% if enable_all_description %}
+                    <td class="text_button">{{ content_list.description }}</td>
+                {% else %}
+                    <td class="text_button">{{ content_list.description|truncatechars:20 }}</td>
+                {% endif %}
+                <td class="text_button">{{ content_list.cost|floatformat:0 }}</td>
+
+                {% if is_rating %}
+                    {% if content_list.rating >= 4 %}
+                        <td class="text-success text_button">{{ content_list.rating|floatformat:2 }}</td>
+                    {% elif content_list.rating >= 2 %}
+                        <td class="text-warning text_button">{{ content_list.rating|floatformat:2 }}</td>
+                    {% else %}
+                        <td class="text-danger text_button">{{ content_list.rating|floatformat:2 }}</td>
+                    {% endif %}
+                    {% else %}
+                        <td class="text_button">--</td>
+                {% endif %}
+
+                {% if enable_all_description %}
+                    {% if content_list.is_activate %}
+                        <td class="text-success text_button">Работает</td>
+                    {% else %}
+                        <td class="text-danger text_button">Не работает</td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

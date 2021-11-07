@@ -1,0 +1,8 @@
+{% load static %}
+{% include 'client_pages/../include/museum_rating.html' %}
+<div>
+    <a class="btn btn-primary text_button"
+       href="{% url 'client_edit_rating' service_id=rating.service_id %}">Редактировать</a>
+    <a class="btn btn-danger text_button"
+       href="{% url 'client_delete_rating' service_id=rating.service_id %}">Удалить</a>
+</div>

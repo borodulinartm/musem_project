@@ -1,0 +1,30 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'revenue_description' revenue_id=content_list.revenue_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.revenue_id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.date }}</td>
+                <td>
+                    <a href="{% url 'service_description' service_id=content_list.service_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.service_name }}</a>
+                </td>
+                <td class="text_button">{{ content_list.revenue }}</td>
+                <td>
+                    <a href="{% url 'user_description' user_id=content_list.client_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.client_name }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

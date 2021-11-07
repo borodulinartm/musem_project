@@ -1,0 +1,40 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }} </th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'rating_description' rating_id=content_list.rating_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.rating_id }}</a>
+                </td>
+                {% if content_list.mark >= 4 %}
+                    <td class="text-success text_button">{{ content_list.mark }}</td>
+                {% elif content_list.mark >= 2 %}
+                    <td class="text-warning text_button">{{ content_list.mark }}</td>
+                {% else %}
+                    <td class="text-danger text_button">{{ content_list.mark }}</td>
+                {% endif %}
+                <td class="text_button">{{ content_list.description }}</td>
+                <td>
+                    <a href="{% url 'user_description' user_id=content_list.id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.username }}</a>
+                </td>
+                <td class="text_button">{{ content_list.date_writing }}</td>
+                {% if show_last_field %}
+                    <td>
+                        <a href="{% url 'service_description' service_id=content_list.service_id %}"
+                           class="btn btn-outline-primary text_button">{{ content_list.name }}</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

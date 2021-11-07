@@ -1,0 +1,31 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    <table class="table table-bordered">
+        {% block table_head %}
+            {% for title in head %}
+                <th class="text_button">{{ title }}</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block table_content %}
+            {% for content_list in table %}
+                <tr>
+                    <td class="text_button">{{ content_list.month }}</td>
+                    {% if content_list.expense %}
+                        <td class="text_button">{{ content_list.expense }}</td>
+                    {% else %}
+                        <td class="text_button">0</td>
+                    {% endif %}
+
+                    {% if content_list.expense_employee %}
+                        <td class="text_button">{{ content_list.expense_employee }}</td>
+                    {% else %}
+                        <td class="text_button">0</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </table>
+</div>

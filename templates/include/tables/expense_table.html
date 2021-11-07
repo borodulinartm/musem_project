@@ -1,0 +1,28 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'expense_description' expense_id=content_list.expense_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.expense_id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.date }}</td>
+                <td class="text_button">{{ content_list.cost }}</td>
+                <td class="text_button">{{ content_list.note }}</td>
+                <td>
+                    <a href="{% url 'employee_description' employee_id=content_list.employee_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.name }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

@@ -1,0 +1,40 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+        {% for content_list in table %}
+            {% if content_list.is_activate %}
+            {% else %}
+                <th class="text_button">Дата увольнения</th>
+            {% endif %}
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+        <tr>
+            <td>
+                <a href="{% url 'employee_description' employee_id=content_list.employee_id %}"
+                   class="btn btn-outline-primary text_button">{{ content_list.employee_id }}</a>
+            </td>
+            <td class="text_button">{{ content_list.name }}</td>
+            <td class="text_button">{{ content_list.surname }}</td>
+            <td class="text_button">{{ content_list.patronymic }}</td>
+            <td class="text_button">{{ content_list.date_of_birth }}</td>
+            <td class="text_button">{{ content_list.post }}</td>
+            <td class="text_button">{{ content_list.salary }}</td>
+            <td class="text_button">{{ content_list.start_working }}</td>
+            {% if content_list.is_activate %}
+                <td class="text-success text_button">Работает в заведении</td>
+            {% else %}
+                <td class="text-danger text_button">Уволен</td>
+                <td class="text_button">{{ content_list.date_off }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

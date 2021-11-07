@@ -1,0 +1,20 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/revenue_table.html' %}
+        {% for content_list in table %}
+            <a class="btn btn-primary text_button"
+               href="{% url 'edit_revenue' revenue_id=content_list.revenue_id %}">Редактировать данные о доходе</a>
+            <a class="btn btn-danger text_button"
+               href="{% url 'delete_revenue' revenue_id=content_list.revenue_id%}">Удалить доход</a>
+        {% endfor %}
+    </div>
+{% endblock content %}

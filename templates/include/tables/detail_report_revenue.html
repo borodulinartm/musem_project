@@ -1,0 +1,25 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    <table class="table table-bordered">
+        {% block table_head %}
+            {% for title in head %}
+                <th class="text_button">{{ title }}</th>
+            {% endfor %}
+        {% endblock %}
+
+        {% block table_content %}
+            {% for content_list in table %}
+                <tr>
+                    <td>
+                        <a href="{% url 'session_description' session_id=content_list.session_id %}"
+                           class="btn btn-outline-primary text_button">{{ content_list.session_id }}</a>
+                    </td>
+                    <td class="text_button">{{ content_list.date }}</td>
+                    <td class="text_button">{{ content_list.dohod }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </table>
+</div>

@@ -1,0 +1,17 @@
+{% load static %}
+<h3>{{ rating.description|truncatechars:20 }}</h3>
+<div class="text_to_list_services">Автор: {{ rating.first_name }}</div>
+{% if rating.mark == None %}
+    <div class="text_to_list_services">Оценка: --</div>
+{% else %}
+    {% if rating.mark >= 4 %}
+        <div class="text-success text_to_list_services">Оценка: {{ rating.mark }}</div>
+    {% elif rating.mark >= 2 %}
+        <div class="text-warning text_to_list_services">Оценка: {{ rating.mark }}</div>
+    {% else %}
+        <div class="text-danger text_to_list_services">Оценка: {{ rating.mark }}</div>
+    {% endif %}
+{% endif %}
+<div class="text_to_list_services">Дата написания: {{ rating.date_writing }}</div>
+<div class="text_to_list_services">Описание: {{ rating.description }}</div>
+

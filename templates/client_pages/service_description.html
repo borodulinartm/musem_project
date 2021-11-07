@@ -1,0 +1,65 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% for service in table_service %}
+                    {% include 'client_pages/../include/museum_service.html' %}
+                {% endfor %}
+
+                {% if request.user.is_authenticated %}
+                    {% if is_rating_exists %}
+                        <h3 class="title">Ваш отзыв</h3>
+                        {% for rating in user_rating_list %}
+                            <div class="bg-light p-5 row service">
+                                {% include 'client_pages/museum_rating_user.html' %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+
+                {% if is_rating_to_service %}
+                    <div style="margin: 75px 150px 75px 150px">
+                        {% if request.user.is_authenticated %}
+                            <h3 class="title" style="margin-bottom: 30px">Отзывы других пользователей</h3>
+                        {% else %}
+                            <h3 class="title" style="margin-bottom: 30px">Отзывы о данной услуге</h3>
+                        {% endif %}
+                        <a class="float-right btn text-white btn-primary text_button"
+                           href="{% url 'client_service_description' service_id=id type_sort='positive' %}">
+                            Сначала положительные
+                        </a>
+                        <a class="float-right btn text-white btn-primary text_button"
+                           href="{% url 'client_service_description' service_id=id type_sort='negative' %}">
+                            Сначала отрицательные
+                        </a>
+                        <a class="float-right btn text-white btn-primary text_button"
+                           href="{% url 'client_service_description' service_id=id type_sort='new' %}">
+                            Сначала новые
+                        </a>
+                        <a class="float-right btn text-white btn-primary text_button"
+                           href="{% url 'client_service_description' service_id=id type_sort='old' %}">
+                            Сначала старые
+                        </a>
+                    </div>
+
+                    {% for rating in table_rating %}
+                        {% if rating.client_id != request.user.id %}
+                            <div class="bg-light p-5 row service">
+                                {% include 'client_pages/../include/museum_rating.html' %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

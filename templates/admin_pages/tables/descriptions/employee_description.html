@@ -1,0 +1,25 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/employee_table.html' %}
+        {% for content_list in table %}
+            {% if content_list.is_activate %}
+                <a class="btn btn-primary text_button"
+                   href="{% url 'edit_employee' employee_id=content_list.employee_id %}">Редактировать данные о сотруднике</a>
+                <a class="btn btn-danger text_button"
+                   href="{% url 'delete_employee' employee_id=content_list.employee_id type_delete=1 %}">Удалить сотрудника</a>
+            {% else %}
+                <a class="btn btn-primary text_button"
+                   href="{% url 'delete_employee' employee_id=content_list.employee_id type_delete=0 %}">Восстановить сотрудника</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock content %}

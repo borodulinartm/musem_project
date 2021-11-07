@@ -1,0 +1,32 @@
+{% extends 'include/base_table.html' %}
+{% load static %}
+
+<div class="my_table">
+    {% block table_head %}
+        {% for title in head %}
+            <th class="text_button">{{ title }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block table_content %}
+        {% for content_list in table %}
+            <tr>
+                <td>
+                    <a href="{% url 'safe_description' safe_id=content_list.safe_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.safe_id }}</a>
+                </td>
+                <td class="text_button">{{ content_list.date }}</td>
+                <td class="text_button">{{ content_list.safety }}</td>
+                {% if is_description %}
+                    <td class="text_button">{{ content_list.note }}</td>
+                {% else %}
+                    <td class="text_button">{{ content_list.note|truncatechars:20 }}</td>
+                {% endif %}
+                <td>
+                    <a href="{% url 'gik_description' gik_id=content_list.gik_id %}"
+                       class="btn btn-outline-primary text_button">{{ content_list.gik_id }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</div>

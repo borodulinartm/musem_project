@@ -1,0 +1,20 @@
+{% extends 'include/base.html' %}
+{% load static %}
+
+{% block title %}
+    <div class="title_block">
+        <h2 class="title">{{ title_page }}</h2>
+    </div>
+{% endblock title %}
+
+{% block content %}
+    <div class="list_button_block">
+        {% include 'include/tables/session_table.html' %}
+        {% for content_list in table %}
+            <a class="btn btn-primary text_button"
+               href="{% url 'edit_session' session_id=content_list.session_id %}">Редактировать данные о посещении</a>
+            <a class="btn btn-danger text_button"
+               href="{% url 'delete_session' session_id=content_list.session_id %}">Удалить сведения</a>
+        {% endfor %}
+    </div>
+{% endblock content %}
