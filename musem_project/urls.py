@@ -104,6 +104,7 @@ urlpatterns = [
 
     path('main_page_admin/report_revenue', admin_calculate_report_revenue, name="report_revenue"),
     path('main_page_admin/report_expense', admin_calculate_report_expense, name="report_expense"),
+    path('main_page_admin/report_earning', admin_calculate_report_earnings, name="report_earning"),
     path('main_page_admin/report_popular', admin_calculate_report_popular, name="report_popular"),
     path('main_page_admin/report_workload', admin_calculate_workload, name="report_workload"),
 

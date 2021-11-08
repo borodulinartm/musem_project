@@ -13,9 +13,14 @@
             {% for content_list in table %}
                 <tr>
                     <td class="text_button">{{ content_list.month }}</td>
+                    <td class="text_button">{{ content_list.summ_revenue|floatformat:0 }}</td>
                     <td class="text_button">{{ content_list.expense|floatformat:0 }}</td>
-                    <td class="text_button">{{ content_list.expense_employee|floatformat:0 }}</td>
-                    <td class="text_button">{{ content_list.sum_expense|floatformat:0 }}</td>
+                    <td class="text_button">{{ content_list.employee|floatformat:0 }}</td>
+                    {% if content_list.earning_money > 0 %}
+                        <td class="text-success text_button">{{ content_list.earning_money|floatformat:0 }}</td>
+                    {% else %}
+                        <td class="text-danger text_button">{{ content_list.earning_money|floatformat:0 }}</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         {% endblock %}

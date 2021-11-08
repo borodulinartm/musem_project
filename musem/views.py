@@ -5,6 +5,7 @@ from django.http import HttpResponseNotFound, HttpResponseForbidden
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from .forms import *
 
+
 # Данная view отвечает за отображение главной пользовательской страницы
 # (пока здесь ничего нету, скоро здесь появится запросы к БД)
 def my_first_view(request):
@@ -21,6 +22,7 @@ def my_first_view(request):
         'is_description': 0,
         'is_administrative_zone': 0
     })
+
 
 # Вьюха, которая позволяет клиенту просмотреть список услуг, которые он посещал и должен посетить
 def client_list_visits(request):
@@ -50,6 +52,7 @@ def client_list_visits(request):
         'is_description': 0,
         'is_administrative_zone': 0
     })
+
 
 # Данная View отображает содержимое услуги, а также отзывы
 def service_description(request, service_id, type_sort):
@@ -111,6 +114,7 @@ def service_description(request, service_id, type_sort):
         'id': service_id
     })
 
+
 # Функция, которая позволяет клиенту покупать билеты
 def client_buy_ticket_to_museum(request, service_id):
     if request.user.is_superuser and not request.user.is_authenticated:
@@ -126,6 +130,7 @@ def client_buy_ticket_to_museum(request, service_id):
     my_revenue.save()
 
     return redirect(reverse('main_page'))
+
 
 # Администраторская зона (его главная страница)
 def admin_main_page(request):
@@ -163,7 +168,8 @@ def admin_client_list(request):
 def admin_employee_list(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
-    head = ["Номер", "Имя", "Фамилия", "Отчество", "Дата рождения", "Должность", "Оклад", "Дата начала работы", "Статус"]
+    head = ["Номер", "Имя", "Фамилия", "Отчество", "Дата рождения", "Должность", "Оклад", "Дата начала работы",
+            "Статус"]
     raw_data = Employee.objects.raw(
         raw_query="SELECT * FROM musem_employee WHERE is_activate = 1"
     )
@@ -175,6 +181,7 @@ def admin_employee_list(request):
         'table': raw_data,
         'is_administrative_zone': 1
     })
+
 
 # Просмотр списка услуг
 def admin_services_list(request):
@@ -265,7 +272,8 @@ def admin_gik(request):
     head = ["Номер", "Дата", "Название предмета", "ФИО автора", "Количество объектов", "Материал",
             "Степень сохранности", "Примечание", "Сотрудник"]
     table = Gik.objects.raw(
-        raw_query="SELECT mg.gik_id, mg.date, mg.name, mg.name_author, mg.surname_author, mg.count_objects, mg.material, mg.safety_on_coming, "
+        raw_query="SELECT mg.gik_id, mg.date, mg.name, mg.name_author, mg.surname_author, mg.count_objects, "
+                  "mg.material, mg.safety_on_coming, "
                   "mg.short_description, mg.note, me.name as name_employee, me.surname as employee_surname, "
                   "me.employee_id FROM musem_gik mg JOIN musem_employee me ON mg.employee_id = me.employee_id "
                   "WHERE mg.is_activate = 1"
@@ -374,7 +382,6 @@ def admin_salary_employee_list(request):
         raw_query="SELECT mse.salary_id, mse.date , mse.count_money, mse.employee_id, me.name FROM musem_sal_emp mse "
                   "JOIN musem_employee me ON mse.employee_id = me.employee_id WHERE mse.is_activate = 1")
 
-
     return render(request, 'admin_pages/tables/salary_employee_list_pages.html', {
         'title_page': 'Журнал выплаты заработной платы',
         'hide_nav_bar': 0,
@@ -429,7 +436,7 @@ def admin_service_description(request, service_id):
     head = ["Номер", "Название", "Описание", "Стоимость", "Отзывы", "Статус"]
     table = Service.objects.raw(
         raw_query=f"SELECT ms.service_id, ms.name, ms.description, ms.cost, (SELECT AVG(mark) FROM musem_rating mr "
-              f"WHERE mr.service_id=ms.service_id AND mr.is_activate = 1) as rating FROM musem_service ms "
+                  f"WHERE mr.service_id=ms.service_id AND mr.is_activate = 1) as rating FROM musem_service ms "
                   f"WHERE ms.service_id = {service_id}")
 
     return render(request, 'admin_pages/tables/descriptions/service_description.html', {
@@ -609,6 +616,7 @@ def admin_inventory_description(request, inventory_id):
         'is_administrative_zone': 1
     })
 
+
 # Просмотр картотеки сохранности
 def admin_rating_service(request, service_id):
     if not request.user.is_superuser:
@@ -628,6 +636,7 @@ def admin_rating_service(request, service_id):
         'show_last_field': 0,
         'is_administrative_zone': 1
     })
+
 
 # Просмотр списка зарплаты сотрудникам (детализированная версия)
 def admin_salary_employee_description(request, salary_id):
@@ -650,7 +659,10 @@ def admin_salary_employee_description(request, salary_id):
         'is_administrative_zone': 1
     })
 
+
 """Удаление различных объектов (делай по такому принципу для всех остальных. По**й на реализацию кода)"""
+
+
 def admin_location_delete(request, location_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -658,12 +670,14 @@ def admin_location_delete(request, location_id):
     Location.objects.filter(location_id=location_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
 
+
 def admin_service_delete(request, service_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
 
     Service.objects.filter(service_id=service_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
+
 
 def admin_client_delete(request, client_id, type_delete):
     if not request.user.is_superuser:
@@ -674,6 +688,7 @@ def admin_client_delete(request, client_id, type_delete):
     else:
         User.objects.filter(id=client_id).update(is_active=1)
     return redirect(reverse('main_page_admin'))
+
 
 def admin_employee_delete(request, employee_id, type_delete):
     if not request.user.is_superuser:
@@ -687,6 +702,7 @@ def admin_employee_delete(request, employee_id, type_delete):
         Employee.objects.filter(employee_id=employee_id).update(is_activate=1)
     return redirect(reverse('main_page_admin'))
 
+
 # Функция, позволяющая удалить отзыв
 def client_rating_delete(request, service_id):
     if not request.user.is_authenticated or request.user.is_superuser:
@@ -694,6 +710,7 @@ def client_rating_delete(request, service_id):
 
     Rating.objects.filter(Q(service_id=service_id) & Q(client_id=request.user.id)).update(is_activate=0)
     return redirect(reverse('main_page'))
+
 
 # Функция, которая позволяет удалить доход
 def admin_revenue_delete(request, revenue_id):
@@ -703,6 +720,7 @@ def admin_revenue_delete(request, revenue_id):
     Revenue.objects.filter(revenue_id=revenue_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
 
+
 def admin_expense_delete(request, expense_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -710,12 +728,14 @@ def admin_expense_delete(request, expense_id):
     Expense.objects.filter(expense_id=expense_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
 
+
 def admin_session_delete(request, session_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
 
     Session.objects.filter(session_id=session_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
+
 
 # Вьюха, которая позволяет клиенту отменить бронирование улсуги
 def client_delete_access_session(request, revenue_id):
@@ -725,12 +745,14 @@ def client_delete_access_session(request, revenue_id):
     Revenue.objects.filter(revenue_id=revenue_id).update(is_activate=0)
     return redirect(reverse('main_page'))
 
+
 def admin_inventory_delete(request, inventory_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
 
     Inventory.objects.filter(inventory_id=inventory_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
+
 
 def admin_safe_delete(request, safe_id):
     if not request.user.is_superuser:
@@ -739,6 +761,7 @@ def admin_safe_delete(request, safe_id):
     Safety.objects.filter(safe_id=safe_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
 
+
 def admin_salary_employee_delete(request, salary_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -746,12 +769,14 @@ def admin_salary_employee_delete(request, salary_id):
     Sal_emp.objects.filter(salary_id=salary_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
 
+
 def admin_rating_delete(request, rating_id):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
 
     Rating.objects.filter(rating_id=rating_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
+
 
 # Не забудь, что при использовании JoIn-а нужно также добавлять проверку на единицу activate-а
 def admin_gik_delete(request, gik_id):
@@ -761,7 +786,10 @@ def admin_gik_delete(request, gik_id):
     Gik.objects.filter(gik_id=gik_id).update(is_activate=0)
     return redirect(reverse('main_page_admin'))
 
+
 """ Формы создания чего-либо """
+
+
 def admin_create_employee(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -783,6 +811,7 @@ def admin_create_employee(request):
         'is_administrative_zone': 1
     })
 
+
 def admin_create_service(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -803,6 +832,7 @@ def admin_create_service(request):
         'text_button': 'Добавить',
         'is_administrative_zone': 1
     })
+
 
 # Вьюха, которая позволяет оставить отзыв к конкретной услуге
 def client_create_rating(request, service_id):
@@ -837,6 +867,7 @@ def client_create_rating(request, service_id):
         'is_administrative_zone': 1
     })
 
+
 def admin_create_expense(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -857,6 +888,7 @@ def admin_create_expense(request):
         'text_button': 'Добавить',
         'is_administrative_zone': 1
     })
+
 
 def admin_create_revenue(request):
     if not request.user.is_superuser:
@@ -879,6 +911,7 @@ def admin_create_revenue(request):
         'is_administrative_zone': 1
     })
 
+
 def admin_create_session(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
@@ -899,6 +932,7 @@ def admin_create_session(request):
         'text_button': 'Добавить',
         'is_administrative_zone': 1
     })
+
 
 # Отвечает за добавление объекта в ГИК
 def admin_create_gik(request):
@@ -922,6 +956,7 @@ def admin_create_gik(request):
         'is_administrative_zone': 1
     })
 
+
 # Отвечает за добавление объекта в ГИК
 def admin_create_safe(request):
     if not request.user.is_superuser:
@@ -943,6 +978,7 @@ def admin_create_safe(request):
         'text_button': 'Добавить',
         'is_administrative_zone': 1
     })
+
 
 # Отвечает за добавление объекта в ГИК
 def admin_create_location(request):
@@ -966,6 +1002,7 @@ def admin_create_location(request):
         'is_administrative_zone': 1
     })
 
+
 # Отвечает за добавление объекта в ГИК
 def admin_create_inventory(request):
     if not request.user.is_superuser:
@@ -987,6 +1024,7 @@ def admin_create_inventory(request):
         'text_button': 'Добавить',
         'is_administrative_zone': 1
     })
+
 
 # Отвечает за добавление объекта в ГИК
 def admin_create_salary_employee(request):
@@ -1010,7 +1048,10 @@ def admin_create_salary_employee(request):
         'is_administrative_zone': 1
     })
 
+
 """ Форма редактирования текста"""
+
+
 # Редактирование сотрудника
 def admin_edit_employee(request, employee_id):
     if not request.user.is_superuser:
@@ -1030,6 +1071,7 @@ def admin_edit_employee(request, employee_id):
         'is_administrative_zone': 1
     })
 
+
 # Редактирование услуги
 def admin_edit_service(request, service_id):
     if not request.user.is_superuser:
@@ -1048,6 +1090,7 @@ def admin_edit_service(request, service_id):
         'text_button': 'Редактировать',
         'is_administrative_zone': 1
     })
+
 
 # Вьюха, которая редактирует отзыв (в случае если, например, человек, изменил своё дилетантское мнение)
 def client_edit_rating(request, service_id):
@@ -1073,6 +1116,7 @@ def client_edit_rating(request, service_id):
         'is_administrative_zone': 0
     })
 
+
 # Редактирование дохода
 def admin_edit_revenue(request, revenue_id):
     if not request.user.is_superuser:
@@ -1091,6 +1135,7 @@ def admin_edit_revenue(request, revenue_id):
         'text_button': 'Редактировать',
         'is_administrative_zone': 1
     })
+
 
 # Редактирование дохода
 def admin_edit_expense(request, expense_id):
@@ -1111,6 +1156,7 @@ def admin_edit_expense(request, expense_id):
         'is_administrative_zone': 1
     })
 
+
 # Редактирование дохода
 def admin_edit_session(request, session_id):
     if not request.user.is_superuser:
@@ -1129,6 +1175,7 @@ def admin_edit_session(request, session_id):
         'text_button': 'Редактировать',
         'is_administrative_zone': 1
     })
+
 
 # Редактирование дохода
 def admin_edit_gik(request, gik_id):
@@ -1149,6 +1196,7 @@ def admin_edit_gik(request, gik_id):
         'is_administrative_zone': 1
     })
 
+
 # Редактирование дохода
 def admin_edit_safe(request, safe_id):
     if not request.user.is_superuser:
@@ -1167,6 +1215,7 @@ def admin_edit_safe(request, safe_id):
         'text_button': 'Редактировать',
         'is_administrative_zone': 1
     })
+
 
 # Редактирование картотеки сохранности
 def admin_edit_location(request, location_id):
@@ -1187,6 +1236,7 @@ def admin_edit_location(request, location_id):
         'is_administrative_zone': 1
     })
 
+
 # Редактирование картотеки сохранности
 def admin_edit_inventory(request, inventory_id):
     if not request.user.is_superuser:
@@ -1205,6 +1255,7 @@ def admin_edit_inventory(request, inventory_id):
         'text_button': 'Редактировать',
         'is_administrative_zone': 1
     })
+
 
 # Редактирование картотеки сохранности
 def admin_edit_salary_employee(request, salary_employee_id):
@@ -1225,6 +1276,7 @@ def admin_edit_salary_employee(request, salary_employee_id):
         'is_administrative_zone': 1
     })
 
+
 # Эта функция стоит особняком - показать историю сохранности в процессе эксплуатации
 def get_safe_history_for_object(request, gik_id):
     if not request.user.is_superuser:
@@ -1244,7 +1296,56 @@ def get_safe_history_for_object(request, gik_id):
         'is_administrative_zone': 1
     })
 
+
 """Отчёты которые мы получаем """
+
+
+def admin_calculate_report_earnings(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        creation_form = DatesForm(data=request.POST)
+        if creation_form.is_valid():
+            start_date = creation_form.cleaned_data['start_date']
+            end_date = creation_form.cleaned_data['end_date']
+            # Запрос, который возвращает таблицу со следующими строчками: доход, расходы заведения, выплаты ЗП, выручка
+            query = f"SELECT ms.session_id, strftime('%m.%Y', ms.date) as month, COALESCE(SUM(mr.revenue), 0) as " \
+                    f"summ_revenue, (SELECT COALESCE(SUM(me.cost), 0) FROM musem_expense me WHERE me.is_activate = 1 " \
+                    f"AND STRFTIME('%m.%Y', me.date) = STRFTIME('%m.%Y', ms.date)) AS expense, " \
+                    f"(SELECT COALESCE (SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate = 1 " \
+                    f"AND STRFTIME('%m.%Y', mse.date) = STRFTIME('%m.%Y', ms.date)) AS employee, " \
+                    f"(COALESCE(SUM(mr.revenue), 0) - (SELECT COALESCE(SUM(me.cost), 0) FROM musem_expense me WHERE " \
+                    f"me.is_activate = 1 AND STRFTIME('%m.%Y', me.date) = STRFTIME('%m.%Y', ms.date)) - " \
+                    f"(SELECT COALESCE (SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate = 1 AND " \
+                    f"STRFTIME('%m.%Y', mse.date) = STRFTIME('%m.%Y', ms.date))) AS " \
+                    f"earning_money FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id " \
+                    f"WHERE ms.date BETWEEN '{start_date}' AND '{end_date}' AND ms.is_activate = 1 GROUP BY month"
+            table = Session.objects.raw(raw_query=query)
+            head = ['Номер месяца', 'Доходы', 'Расходы', 'Выплата сотрудникам', 'Выручка']
+            return render(request, 'admin_pages/tables/report_earning_list_pages.html', {
+                'title_page': 'Отчёт по выручке',
+                'hide_nav_bar': 0,
+                'head': head,
+                'table': table,
+                'start_date': start_date,
+                'end_date': end_date,
+                'is_administrative_zone': 1
+            })
+        else:
+            messages.error(request, "Error in inputting the data")
+    else:
+        creation_form = DatesForm()
+
+    return render(request, 'admin_pages/forms/form_create_object.html', {
+        'hide_nav_bar': 0,
+        'form': creation_form,
+        'title_page': 'Отчёт по выручке',
+        'text_button': 'Получить отчёт',
+        'is_administrative_zone': 1
+    })
+
+
 # Отчёт, который позволяет нам получить доходы в разные периоды
 def admin_calculate_report_revenue(request):
     if not request.user.is_superuser:
@@ -1257,10 +1358,10 @@ def admin_calculate_report_revenue(request):
         if creation_form.is_valid():
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
-            query = f"SELECT ms.session_id, strftime('%m', ms.date) as month, SUM(mr.revenue) as summ_revenue " \
+            query = f"SELECT ms.session_id, strftime('%m.%Y', ms.date) as month_year, " \
+                    f"strftime('%m', ms.date) as month, SUM(mr.revenue) as summ_revenue " \
                     f"FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id WHERE ms.date " \
                     f"BETWEEN '{start_date}' AND '{end_date}' AND ms.is_activate = 1 GROUP BY month;"
-            print(query)
             table = Session.objects.raw(query)
             head = ['Месяц', 'Доход']
             return render(request, 'admin_pages/tables/report_revenue.html', {
@@ -1272,7 +1373,8 @@ def admin_calculate_report_revenue(request):
                 'end_date': end_date,
                 'is_administrative_zone': 1
             })
-
+        else:
+            messages.error(request, 'Error in the inputting the data')
     else:
         creation_form = DatesForm()
 
@@ -1283,6 +1385,7 @@ def admin_calculate_report_revenue(request):
         'text_button': 'Получить отчёт',
         'is_administrative_zone': 1
     })
+
 
 # Отчёт, который позволяет показать расходы заведения за месяц
 def admin_calculate_report_expense(request):
@@ -1297,13 +1400,15 @@ def admin_calculate_report_expense(request):
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
 
-            query = f"SELECT me.expense_id, strftime('%m', me.date) as month, SUM(me.cost) AS expense, (SELECT SUM(mse.count_money) " \
-                    f"FROM musem_sal_emp mse WHERE mse.is_activate " \
-                    f"AND strftime('%m', me.date) = strftime('%m', mse.date)) AS " \
-                    f"expense_employee FROM musem_expense me WHERE me.is_activate = 1 " \
-                    f"AND me.date BETWEEN '{start_date}' AND '{end_date}' GROUP BY month;"
+            query = f"SELECT me.expense_id, strftime('%m.%Y', me.date) as month, COALESCE(SUM(me.cost), 0) AS expense, " \
+                    f"(SELECT COALESCE(SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate AND " \
+                    f"strftime('%m.%Y', me.date) = strftime('%m.%Y', mse.date)) AS expense_employee, " \
+                    f"(COALESCE(SUM(me.cost), 0) + (SELECT COALESCE(SUM(mse.count_money), 0) FROM musem_sal_emp mse " \
+                    f"WHERE mse.is_activate AND strftime('%m.%Y', me.date) = strftime('%m.%Y', mse.date))) AS " \
+                    f"sum_expense FROM musem_expense me WHERE me.is_activate = 1 AND me.date BETWEEN '{start_date}' " \
+                    f"AND '{end_date}' GROUP BY month"
 
-            head = ['Месяц', 'Расходы', "Выплата сотрудникам"]
+            head = ['Месяц', 'Расходы', "Выплата сотрудникам", 'Суммарные расходы']
             table = Expense.objects.raw(query)
 
             return render(request, 'admin_pages/tables/report_expense.html', {
@@ -1315,7 +1420,8 @@ def admin_calculate_report_expense(request):
                 'end_date': end_date,
                 'is_administrative_zone': 1
             })
-
+        else:
+            messages.error(request, 'Error in the inputting data')
     else:
         creation_form = DatesForm()
 
@@ -1326,6 +1432,7 @@ def admin_calculate_report_expense(request):
         'text_button': 'Получить отчёт',
         'is_administrative_zone': 1
     })
+
 
 # Отчёт, который позволяет показать выручку заведения за месяц
 def admin_calculate_report_popular(request):
@@ -1340,7 +1447,8 @@ def admin_calculate_report_popular(request):
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
 
-            query = f"SELECT ms.session_id, STRFTIME('%m', ms.date) AS month, ms2.name AS service_name, COUNT(ms2.name) " \
+            query = f"SELECT ms.session_id, STRFTIME('%m.%Y', ms.date) AS month, ms2.name AS service_name, " \
+                    f"COUNT(ms2.name) " \
                     f"as popularity FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id " \
                     f"JOIN musem_service ms2 ON mr.service_id = ms2.service_id WHERE ms.date " \
                     f"BETWEEN '{start_date}' AND '{end_date}' GROUP BY month ORDER BY popularity DESC ;"
@@ -1357,7 +1465,8 @@ def admin_calculate_report_popular(request):
                 'end_date': end_date,
                 'is_administrative_zone': 1
             })
-
+        else:
+            messages.error(request, 'Error in the inputting data')
     else:
         creation_form = DatesForm()
 
@@ -1368,6 +1477,7 @@ def admin_calculate_report_popular(request):
         'text_button': 'Получить отчёт',
         'is_administrative_zone': 1
     })
+
 
 # Отчёт, который позволяет показать выручку заведения за месяц
 def admin_calculate_workload(request):
@@ -1398,7 +1508,8 @@ def admin_calculate_workload(request):
                 'end_date': end_date,
                 'is_administrative_zone': 1
             })
-
+        else:
+            messages.error(request, 'Error in the inputting data')
     else:
         creation_form = DatesForm()
 
@@ -1409,6 +1520,7 @@ def admin_calculate_workload(request):
         'text_button': 'Получить отчёт',
         'is_administrative_zone': 1
     })
+
 
 # Просмотр детальной информации по доходу за месяц
 def admin_get_data_by_month(request, month_id):
@@ -1429,7 +1541,10 @@ def admin_get_data_by_month(request, month_id):
         'is_administrative_zone': 1
     })
 
+
 """Регистрация пользователей"""
+
+
 # Примечание: пароль надо вводить с учётом больших букв, маленьких букв и цифр
 # Иначе он не регистрирует
 def register_user(request):
@@ -1460,6 +1575,7 @@ def register_user(request):
         'is_administrative_zone': 0
     })
 
+
 # Метод занимается авторизацией пользователя (не трогать код ^^))
 def login_user(request):
     if request.user.is_authenticated:
@@ -1488,12 +1604,14 @@ def login_user(request):
         'is_administrative_zone': 0
     })
 
+
 # Случай, когда пользователь выходит из системы
 def logout_user(request):
     if not request.user.is_authenticated:
         return HttpResponseNotFound()
     auth.logout(request)
     return redirect(reverse('main_page'))
+
 
 # Данная форма позволяет изменить пользовательские даннве
 def change_data_user(request):
@@ -1526,6 +1644,7 @@ def change_data_user(request):
         'is_administrative_zone': 0
     })
 
+
 # Эта смена пароля (не сброс пароля, это другое)
 def change_password(request):
     if not request.user.is_authenticated:
@@ -1550,6 +1669,7 @@ def change_password(request):
         'text_button': 'Изменить пароль',
         'is_administrative_zone': 0
     })
+
 
 # Метод позволяет получить информацию о пользователе
 def show_user_data(request):
