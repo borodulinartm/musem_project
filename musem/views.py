@@ -47,7 +47,9 @@ def client_list_visits(request):
     return render(request, 'client_pages/user_visited_not_visited_sessions.html', {
         'title_page': "Ваши посещения",
         'hide_nav_bar': 0,
+        'is_accessible_sessions': len(list(list_accesible_sessions)),
         'list_accesible_sessions': list_accesible_sessions,
+        'is_visited_session': len(list(list_visited_sessions)),
         'list_visited_sessions': list_visited_sessions,
         'is_description': 0,
         'is_administrative_zone': 0
@@ -260,7 +262,7 @@ def admin_expense_list(request):
 def admin_session_list(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
-    head = ["Номер", "Дата", "Чек"]
+    head = ["Номер", "Дата", "Чек ID"]
     table = Session.objects.raw(
         raw_query="SELECT ms.session_id, ms.date, ms.revenue_id FROM musem_session ms JOIN musem_revenue mr ON "
                   "ms.revenue_id = mr.revenue_id AND mr.is_activate = 1 WHERE ms.is_activate = 1"
@@ -533,7 +535,7 @@ def admin_session_description(request, session_id):
         return HttpResponseForbidden()
     # Модель нашей таблицы (то как она будет выглядеть)
     # Пока здесь текст-рыба но в будущем здесь будет запрос
-    head = ["Номер", "Дата", "Чек"]
+    head = ["Номер", "Дата", "Чек ID"]
     table = Session.objects.raw(
         raw_query=f"SELECT * FROM musem_session WHERE session_id = {session_id} AND is_activate = 1"
     )
@@ -1295,7 +1297,8 @@ def get_safe_history_for_object(request, gik_id):
 
     head = ["Номер", "Дата", "Сохранность", "Примечание", "Музейный объект"]
     table = Safety.objects.raw(
-        raw_query=f"SELECT * FROM musem_safety ms WHERE ms.gik_id = {gik_id} AND ms.is_activate = 1 ORDER BY ms.date DESC;"
+        raw_query=f"SELECT * FROM musem_safety ms WHERE ms.gik_id = {gik_id} AND ms.is_activate = 1 "
+                  f"ORDER BY ms.date DESC;"
     )
 
     return render(request, 'admin_pages/tables/safety_list_pages.html', {
@@ -1369,6 +1372,7 @@ def admin_calculate_report_revenue(request):
         if creation_form.is_valid():
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
+
             query = f"SELECT ms.session_id, strftime('%m.%Y', ms.date) as month_year, " \
                     f"strftime('%m', ms.date) as month, SUM(mr.revenue) as summ_revenue " \
                     f"FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id WHERE ms.date " \
@@ -1412,15 +1416,13 @@ def admin_calculate_report_expense(request):
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
 
-            query = f"SELECT me.expense_id, strftime('%m.%Y', me.date) as month, COALESCE(SUM(me.cost), 0) AS expense, " \
-                    f"(SELECT COALESCE(SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate AND " \
-                    f"strftime('%m.%Y', me.date) = strftime('%m.%Y', mse.date)) AS expense_employee, " \
-                    f"(COALESCE(SUM(me.cost), 0) + (SELECT COALESCE(SUM(mse.count_money), 0) FROM musem_sal_emp mse " \
-                    f"WHERE mse.is_activate AND strftime('%m.%Y', me.date) = strftime('%m.%Y', mse.date))) AS " \
-                    f"sum_expense FROM musem_expense me WHERE me.is_activate = 1 AND me.date BETWEEN '{start_date}' " \
-                    f"AND '{end_date}' GROUP BY month"
+            query = f"SELECT expense_id, date_month, SUM(cost) as summ FROM (SELECT STRFTIME('%m.%Y', me.date) " \
+                    f"as date_month, me.cost, me.expense_id FROM musem_expense me WHERE me.date BETWEEN " \
+                    f"'{start_date}' AND '{end_date}' UNION SELECT STRFTIME('%m.%Y', mse.date) as date_month, " \
+                    f"mse.count_money, mse.salary_id FROM musem_sal_emp mse WHERE mse.date " \
+                    f"BETWEEN '{start_date}' AND '{end_date}') GROUP BY date_month;"
 
-            head = ['Месяц', 'Расходы', "Выплата сотрудникам", 'Суммарные расходы']
+            head = ['Месяц', 'Суммарные расходы']
             table = Expense.objects.raw(query)
 
             return render(request, 'admin_pages/tables/report_expense.html', {

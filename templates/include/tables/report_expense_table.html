@@ -12,10 +12,8 @@
         {% block table_content %}
             {% for content_list in table %}
                 <tr>
-                    <td class="text_button">{{ content_list.month }}</td>
-                    <td class="text_button">{{ content_list.expense|floatformat:0 }}</td>
-                    <td class="text_button">{{ content_list.expense_employee|floatformat:0 }}</td>
-                    <td class="text_button">{{ content_list.sum_expense|floatformat:0 }}</td>
+                    <td class="text_button">{{ content_list.date_month }}</td>
+                    <td class="text_button">{{ content_list.summ|floatformat:0 }}</td>
                 </tr>
             {% endfor %}
         {% endblock %}

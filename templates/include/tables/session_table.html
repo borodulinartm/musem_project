@@ -20,7 +20,7 @@
                     <td>
                         {# Под чеком подразумевается сведения о покупке #}
                         <a href="{% url 'revenue_description' revenue_id=content_list.revenue_id %}"
-                           class="btn btn-outline-primary text_button">Чек</a>
+                           class="btn btn-outline-primary text_button">{{ content_list.revenue_id }}</a>
                     </td>
                 </tr>
             {% endfor %}
