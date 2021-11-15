@@ -12,7 +12,6 @@
         {% block table_content %}
             {% for content_list in table %}
                 <tr>
-                    <td class="text_button">{{ content_list.month }}</td>
                     <td class="text_button">{{ content_list.summ_revenue|floatformat:0 }}</td>
                     <td class="text_button">{{ content_list.expense|floatformat:0 }}</td>
                     <td class="text_button">{{ content_list.employee|floatformat:0 }}</td>

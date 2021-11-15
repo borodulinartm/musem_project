@@ -151,6 +151,11 @@ def admin_client_list(request):
         raw_query="SELECT id, first_name, last_name, username, email, is_active FROM auth_user WHERE is_active = 1 "
                   "AND is_staff = 0 AND is_superuser = 0"
     )
+
+    raw_banned_data = User.objects.raw(
+        raw_query="SELECT id, first_name, last_name, username, email, is_active FROM auth_user WHERE is_active = 0 "
+                  "AND is_staff = 0 AND is_superuser = 0"
+    )
     # Модель нашей таблицы (то как она будет выглядеть)
     # Пока здесь текст-рыба но в будущем здесь будет запрос
     head = ["Номер", "Имя", "Фамилия", "Ник", "Почта", "Статус"]
@@ -160,6 +165,7 @@ def admin_client_list(request):
         'hide_nav_bar': 0,
         'head': head,
         'table': raw_data,
+        'banned_table': raw_banned_data,
         'is_administrative_zone': 1
     })
 
@@ -174,11 +180,16 @@ def admin_employee_list(request):
         raw_query="SELECT * FROM musem_employee WHERE is_activate = 1"
     )
 
+    banned_employee = Employee.objects.raw(
+        raw_query="SELECT * FROM musem_employee WHERE is_activate = 0"
+    )
+
     return render(request, 'admin_pages/tables/employee_list_pages.html', {
         'title_page': 'Журнал сотрудников',
         'hide_nav_bar': 0,
         'head': head,
         'table': raw_data,
+        'banned_table': banned_employee,
         'is_administrative_zone': 1
     })
 
@@ -1310,19 +1321,19 @@ def admin_calculate_report_earnings(request):
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
             # Запрос, который возвращает таблицу со следующими строчками: доход, расходы заведения, выплаты ЗП, выручка
-            query = f"SELECT ms.session_id, strftime('%m.%Y', ms.date) as month, COALESCE(SUM(mr.revenue), 0) as " \
-                    f"summ_revenue, (SELECT COALESCE(SUM(me.cost), 0) FROM musem_expense me WHERE me.is_activate = 1 " \
-                    f"AND STRFTIME('%m.%Y', me.date) = STRFTIME('%m.%Y', ms.date)) AS expense, " \
+            query = f"SELECT ms.session_id, COALESCE(SUM(mr.revenue), 0) as summ_revenue, " \
+                    f"(SELECT COALESCE(SUM(me.cost), 0) FROM musem_expense me WHERE me.is_activate = 1 AND " \
+                    f"me.date BETWEEN '{start_date}' AND '{end_date}') AS expense, " \
                     f"(SELECT COALESCE (SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate = 1 " \
-                    f"AND STRFTIME('%m.%Y', mse.date) = STRFTIME('%m.%Y', ms.date)) AS employee, " \
-                    f"(COALESCE(SUM(mr.revenue), 0) - (SELECT COALESCE(SUM(me.cost), 0) FROM musem_expense me WHERE " \
-                    f"me.is_activate = 1 AND STRFTIME('%m.%Y', me.date) = STRFTIME('%m.%Y', ms.date)) - " \
-                    f"(SELECT COALESCE (SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate = 1 AND " \
-                    f"STRFTIME('%m.%Y', mse.date) = STRFTIME('%m.%Y', ms.date))) AS " \
-                    f"earning_money FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id " \
-                    f"WHERE ms.date BETWEEN '{start_date}' AND '{end_date}' AND ms.is_activate = 1 GROUP BY month"
+                    f"AND mse.date BETWEEN '{start_date}' AND '{end_date}') as employee, " \
+                    f"(COALESCE(SUM(mr.revenue), 0) - (SELECT COALESCE(SUM(me.cost), 0) FROM musem_expense me " \
+                    f"WHERE me.is_activate = 1 AND me.date BETWEEN '{start_date}' AND '{end_date}') - " \
+                    f"(SELECT COALESCE (SUM(mse.count_money), 0) FROM musem_sal_emp mse WHERE mse.is_activate = 1 " \
+                    f"AND mse.date BETWEEN '{start_date}' AND '{end_date}')) AS earning_money FROM musem_session ms " \
+                    f"JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id WHERE ms.date BETWEEN '{start_date}' " \
+                    f"AND '{end_date}' AND ms.is_activate = 1"
             table = Session.objects.raw(raw_query=query)
-            head = ['Номер месяца', 'Доходы', 'Расходы', 'Выплата сотрудникам', 'Выручка']
+            head = ['Доходы', 'Расходы', 'Выплата сотрудникам', 'Выручка']
             return render(request, 'admin_pages/tables/report_earning_list_pages.html', {
                 'title_page': 'Отчёт по выручке',
                 'hide_nav_bar': 0,
@@ -1363,6 +1374,7 @@ def admin_calculate_report_revenue(request):
                     f"FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id WHERE ms.date " \
                     f"BETWEEN '{start_date}' AND '{end_date}' AND ms.is_activate = 1 GROUP BY month;"
             table = Session.objects.raw(query)
+
             head = ['Месяц', 'Доход']
             return render(request, 'admin_pages/tables/report_revenue.html', {
                 'title_page': 'Отчёт по доходам',
@@ -1447,11 +1459,10 @@ def admin_calculate_report_popular(request):
             start_date = creation_form.cleaned_data['start_date']
             end_date = creation_form.cleaned_data['end_date']
 
-            query = f"SELECT ms.session_id, STRFTIME('%m.%Y', ms.date) AS month, ms2.name AS service_name, " \
-                    f"COUNT(ms2.name) " \
-                    f"as popularity FROM musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id " \
-                    f"JOIN musem_service ms2 ON mr.service_id = ms2.service_id WHERE ms.date " \
-                    f"BETWEEN '{start_date}' AND '{end_date}' GROUP BY month ORDER BY popularity DESC ;"
+            query = f"SELECT ms.session_id, ms2.name AS service_name, COUNT(ms2.name) as popularity FROM " \
+                    f"musem_session ms JOIN musem_revenue mr ON ms.revenue_id = mr.revenue_id JOIN musem_service " \
+                    f"ms2 ON mr.service_id = ms2.service_id WHERE ms.date BETWEEN '{start_date}' AND '{end_date}' " \
+                    f"GROUP BY ms2.name ORDER BY popularity DESC ;"
 
             head = ['Название услуги', "Популярность"]
             table = Session.objects.raw(query)

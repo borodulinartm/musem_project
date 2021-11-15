@@ -9,8 +9,9 @@
 
 {% block content %}
     <div class="list_button_block">
-        <a class="float-right btn text-white btn-success text_button" href="#">Добавить новые данные</a>
-        <h2 class="sub_title_table">Клиенты</h2>
+        <h2 class="sub_title_table">Зарегистрированные клиенты</h2>
         {% include 'include/tables/client_table.html' %}
+        <h2 class="sub_title_table">Забаненные клиенты</h2>
+        {% include 'include/tables/client_bannd_table.html' %}
     </div>
 {% endblock content %}

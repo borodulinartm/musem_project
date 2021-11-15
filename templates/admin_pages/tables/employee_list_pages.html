@@ -13,5 +13,7 @@
            href="{% url 'create_employee' %}">Добавить новые данные</a>
         <h2 class="sub_title_table">Сотрудники</h2>
         {% include 'include/tables/employee_table.html' %}
+        <h2 class="sub_title_table">Уволенные сотрудники</h2>
+        {% include 'include/tables/employee_banned_table.html' %}
     </div>
 {% endblock content %}

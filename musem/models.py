@@ -4,10 +4,11 @@ import django.utils.timezone
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Таблица сотрудников
 class Employee(models.Model):
     employee_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, default="Ivan")
+    name = models.CharField(max_length=100, default="Ivan", blank=True)
     surname = models.CharField(max_length=100, default="Ivanov")
     patronymic = models.CharField(max_length=100, default="Ivanovich")
     date_of_birth = models.DateField()
@@ -17,13 +18,13 @@ class Employee(models.Model):
     is_activate = models.IntegerField(default=1)
     date_off = models.DateField(default=django.utils.timezone.now(), blank=True)
 
-
     def __str__(self):
         return str(self.employee_id)
 
     class Meta:
         verbose_name = "Employee"
         verbose_name_plural = "Employee on a museum"
+
 
 # Класс, отвечающий за отзывы к конкретной услуге
 class Rating(models.Model):
@@ -34,6 +35,7 @@ class Rating(models.Model):
     service = models.ForeignKey('Service', on_delete=models.CASCADE)
     is_activate = models.IntegerField(default=1)
     date_writing = models.DateTimeField(default=django.utils.timezone.now(), blank=True)
+
 
 # Класс, отвечаюзий за услуги
 # Примечание: поле рейтинг не нужно, так как выборку можно производить и в самом запросе
@@ -51,6 +53,7 @@ class Service(models.Model):
         verbose_name = "Service"
         verbose_name_plural = "Service in this museum"
 
+
 # Класс, отвечающий за доходы данного предприятия
 class Revenue(models.Model):
     revenue_id = models.IntegerField(primary_key=True)
@@ -66,6 +69,7 @@ class Revenue(models.Model):
     class Meta:
         verbose_name = "Revenue"
         verbose_name_plural = "Revenue in the museum"
+
 
 # Таблица, отвечающая за расходы музея
 class Expense(models.Model):
@@ -83,6 +87,7 @@ class Expense(models.Model):
         verbose_name = "Expense"
         verbose_name_plural = "Expense in the museum"
 
+
 # Класс, отвечающий за посещения клиентов в музей
 class Session(models.Model):
     session_id = models.IntegerField(primary_key=True)
@@ -96,6 +101,7 @@ class Session(models.Model):
     class Meta:
         verbose_name = "Session"
         verbose_name_plural = "Session on the museum"
+
 
 # Таблица, отвечающая за ведение ГИК (главной инвентарной книги музея)
 class Gik(models.Model):
@@ -119,6 +125,7 @@ class Gik(models.Model):
         verbose_name = "Gik"
         verbose_name_plural = "Gik in museum"
 
+
 # Класс, который отвечает за сохранность объектов
 class Safety(models.Model):
     safe_id = models.IntegerField(primary_key=True)
@@ -134,6 +141,7 @@ class Safety(models.Model):
     class Meta:
         verbose_name = "Safety"
         verbose_name_plural = "Safety in a museum"
+
 
 # Класс - позиция нашего объекта в музее
 class Location(models.Model):
@@ -151,6 +159,7 @@ class Location(models.Model):
         verbose_name = "Location"
         verbose_name_plural = "Location on a museum"
 
+
 # Класс, описывающий инвентарную картотеку
 class Inventory(models.Model):
     inventory_id = models.IntegerField(primary_key=True)
@@ -164,6 +173,7 @@ class Inventory(models.Model):
     class Meta:
         verbose_name = "Inventory journal"
         verbose_name_plural = "Inventory journal in the museum"
+
 
 # Класс - зарплата сотрудникам
 class Sal_emp(models.Model):
